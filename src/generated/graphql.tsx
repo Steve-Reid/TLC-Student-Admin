@@ -9,6 +9,56 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
+  /** The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
+  Timestamp: any,
+};
+
+export type Attendance = {
+   __typename?: 'Attendance',
+  id: Scalars['ID'],
+  userId: Scalars['Int'],
+  attendanceDate: Scalars['Timestamp'],
+  level?: Maybe<Scalars['Int']>,
+  isLead?: Maybe<Scalars['Boolean']>,
+  tariffId?: Maybe<Scalars['Int']>,
+};
+
+export type ClassSession = {
+   __typename?: 'ClassSession',
+  id: Scalars['ID'],
+  date: Scalars['Timestamp'],
+  danceClassId: Scalars['Int'],
+  leads: Scalars['Int'],
+  follows: Scalars['Int'],
+  instructorId?: Maybe<Scalars['Int']>,
+  user?: Maybe<User>,
+  danceClass: DanceClass,
+};
+
+export type ClassSessionInput = {
+  date: Scalars['Timestamp'],
+  danceClassId: Scalars['Int'],
+  instructorId?: Maybe<Scalars['Int']>,
+};
+
+export type DanceClass = {
+   __typename?: 'DanceClass',
+  id: Scalars['ID'],
+  name: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
+  level: Scalars['Int'],
+  classSessions?: Maybe<Array<ClassSession>>,
+};
+
+export type DanceClassInput = {
+  name: Scalars['String'],
+  description: Scalars['String'],
+  level: Scalars['Int'],
+};
+
+export type LoginInput = {
+  email: Scalars['String'],
+  password: Scalars['String'],
 };
 
 export type LoginResponse = {
@@ -19,10 +69,23 @@ export type LoginResponse = {
 
 export type Mutation = {
    __typename?: 'Mutation',
-  revokeRefreshTokensForUser: Scalars['Boolean'],
-  logout: Scalars['Boolean'],
+  register: User,
   login: LoginResponse,
-  register: Scalars['Boolean'],
+  logout: Scalars['Boolean'],
+  revokeRefreshTokensForUser: Scalars['Boolean'],
+  createDanceClass: DanceClass,
+  createClassSession: ClassSession,
+  addPrice: Price,
+};
+
+
+export type MutationRegisterArgs = {
+  data: RegisterInput
+};
+
+
+export type MutationLoginArgs = {
+  data: LoginInput
 };
 
 
@@ -31,30 +94,113 @@ export type MutationRevokeRefreshTokensForUserArgs = {
 };
 
 
-export type MutationLoginArgs = {
-  password: Scalars['String'],
-  email: Scalars['String']
+export type MutationCreateDanceClassArgs = {
+  data: DanceClassInput
 };
 
 
-export type MutationRegisterArgs = {
-  password: Scalars['String'],
-  email: Scalars['String']
+export type MutationCreateClassSessionArgs = {
+  data: ClassSessionInput
+};
+
+
+export type MutationAddPriceArgs = {
+  data: PriceInput
+};
+
+export type Price = {
+   __typename?: 'Price',
+  id: Scalars['ID'],
+  name: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
+  isActive: Scalars['Boolean'],
+  currentPrice: Scalars['Int'],
+};
+
+export type PriceInput = {
+  name: Scalars['String'],
+  description?: Maybe<Scalars['String']>,
+  currentPrice: Scalars['Float'],
+};
+
+export type PriceRevision = {
+   __typename?: 'PriceRevision',
+  id: Scalars['ID'],
+  priceId: Scalars['Int'],
+  priceFrom: Scalars['Timestamp'],
+  priceTo?: Maybe<Scalars['Timestamp']>,
+  cost: Scalars['Float'],
 };
 
 export type Query = {
    __typename?: 'Query',
   hello: Scalars['String'],
+  me?: Maybe<User>,
   bye: Scalars['String'],
   users: Array<User>,
-  me?: Maybe<User>,
+  user?: Maybe<User>,
+  danceClass: DanceClass,
+  danceClasses: Array<DanceClass>,
+  classSession: ClassSession,
+  classSessions: Array<ClassSession>,
+  prices: Array<Price>,
+  priceRevisions: Array<PriceRevision>,
 };
+
+
+export type QueryUserArgs = {
+  userId: Scalars['Int']
+};
+
+
+export type QueryDanceClassArgs = {
+  danceClassId: Scalars['Int']
+};
+
+
+export type QueryClassSessionArgs = {
+  classSessionId: Scalars['Int']
+};
+
+export type RegisterInput = {
+  name: Scalars['String'],
+  email: Scalars['String'],
+  password: Scalars['String'],
+  phone?: Maybe<Scalars['String']>,
+};
+
+export enum Source {
+  Website = 'WEBSITE',
+  Facebook = 'FACEBOOK',
+  Mouth = 'MOUTH',
+  Flyer = 'FLYER',
+  Radio = 'RADIO',
+  Other = 'OTHER'
+}
+
 
 export type User = {
    __typename?: 'User',
-  id: Scalars['Int'],
+  id: Scalars['ID'],
+  name: Scalars['String'],
   email: Scalars['String'],
+  tokenVersion: Scalars['Int'],
+  isActive: Scalars['Boolean'],
+  isSubscribed: Scalars['Boolean'],
+  credits: Scalars['Int'],
+  role: UserRole,
+  discoverySource: Source,
+  phone?: Maybe<Scalars['String']>,
+  address?: Maybe<Scalars['String']>,
+  notes?: Maybe<Scalars['String']>,
 };
+
+export enum UserRole {
+  Admin = 'ADMIN',
+  Support = 'SUPPORT',
+  Instructor = 'INSTRUCTOR',
+  Student = 'STUDENT'
+}
 export type ByeQueryVariables = {};
 
 
@@ -108,7 +254,19 @@ export type MeQuery = (
   )> }
 );
 
+export type PricesQueryVariables = {};
+
+
+export type PricesQuery = (
+  { __typename?: 'Query' }
+  & { prices: Array<(
+    { __typename?: 'Price' }
+    & Pick<Price, 'id' | 'name' | 'description' | 'currentPrice' | 'isActive'>
+  )> }
+);
+
 export type RegisterMutationVariables = {
+  name: Scalars['String'],
   email: Scalars['String'],
   password: Scalars['String']
 };
@@ -116,7 +274,23 @@ export type RegisterMutationVariables = {
 
 export type RegisterMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'register'>
+  & { register: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name'>
+  ) }
+);
+
+export type UserQueryVariables = {
+  userId: Scalars['Int']
+};
+
+
+export type UserQuery = (
+  { __typename?: 'Query' }
+  & { user: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'email' | 'isActive' | 'credits'>
+  )> }
 );
 
 export type UsersQueryVariables = {};
@@ -126,7 +300,7 @@ export type UsersQuery = (
   { __typename?: 'Query' }
   & { users: Array<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email'>
+    & Pick<User, 'id' | 'name' | 'isActive'>
   )> }
 );
 
@@ -162,7 +336,7 @@ export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
 export type HelloQueryResult = ApolloReactCommon.QueryResult<HelloQuery, HelloQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
-  login(email: $email, password: $password) {
+  login(data: {email: $email, password: $password}) {
     accessToken
     user {
       id
@@ -210,9 +384,33 @@ export const MeDocument = gql`
       
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeQueryResult = ApolloReactCommon.QueryResult<MeQuery, MeQueryVariables>;
+export const PricesDocument = gql`
+    query Prices {
+  prices {
+    id
+    name
+    description
+    currentPrice
+    isActive
+  }
+}
+    `;
+
+    export function usePricesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<PricesQuery, PricesQueryVariables>) {
+      return ApolloReactHooks.useQuery<PricesQuery, PricesQueryVariables>(PricesDocument, baseOptions);
+    }
+      export function usePricesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PricesQuery, PricesQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<PricesQuery, PricesQueryVariables>(PricesDocument, baseOptions);
+      }
+      
+export type PricesQueryHookResult = ReturnType<typeof usePricesQuery>;
+export type PricesQueryResult = ApolloReactCommon.QueryResult<PricesQuery, PricesQueryVariables>;
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $password: String!) {
-  register(email: $email, password: $password)
+    mutation Register($name: String!, $email: String!, $password: String!) {
+  register(data: {name: $name, email: $email, password: $password}) {
+    id
+    name
+  }
 }
     `;
 export type RegisterMutationFn = ApolloReactCommon.MutationFunction<RegisterMutation, RegisterMutationVariables>;
@@ -223,11 +421,33 @@ export type RegisterMutationFn = ApolloReactCommon.MutationFunction<RegisterMuta
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = ApolloReactCommon.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const UserDocument = gql`
+    query User($userId: Int!) {
+  user(userId: $userId) {
+    id
+    name
+    email
+    isActive
+    credits
+  }
+}
+    `;
+
+    export function useUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserQuery, UserQueryVariables>) {
+      return ApolloReactHooks.useQuery<UserQuery, UserQueryVariables>(UserDocument, baseOptions);
+    }
+      export function useUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserQuery, UserQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, baseOptions);
+      }
+      
+export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
+export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;
 export const UsersDocument = gql`
     query Users {
   users {
     id
-    email
+    name
+    isActive
   }
 }
     `;

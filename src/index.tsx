@@ -13,7 +13,7 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import { getAccessToken, setAccessToken } from './accessToken';
 import { App } from './App';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const cache = new InMemoryCache({});
 
@@ -102,9 +102,9 @@ const render = (Component: React.FunctionComponent) => {
   // eslint-disable-next-line react/no-render-return-value
   return ReactDOM.render(
     <ApolloProvider client={client}>
-      <BrowserRouter>
+      <Router>
         <Component />
-      </BrowserRouter>
+      </Router>
     </ApolloProvider>,
     document.getElementById('root')
   );

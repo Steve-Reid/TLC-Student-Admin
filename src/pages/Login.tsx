@@ -5,12 +5,15 @@ import { validationSchema } from '../utils/validationSchema';
 import { useLoginMutation, MeDocument, MeQuery } from '../generated/graphql';
 import { setAccessToken } from '../accessToken';
 import { FormTextField } from '../components/fields/FormTextField';
+import { History } from 'history';
 
-interface LoginProps {}
+interface LoginProps {
+  history: History;
+}
 
 export const Login: React.FC<LoginProps & RouteComponentProps> = ({
-  history
-}) => {
+  history,
+}: LoginProps) => {
   const [login] = useLoginMutation();
   return (
     <div>
@@ -20,7 +23,7 @@ export const Login: React.FC<LoginProps & RouteComponentProps> = ({
       <Formik
         initialValues={{
           email: '',
-          password: ''
+          password: '',
         }}
         validationSchema={validationSchema}
         onSubmit={async ({ email, password }, { setSubmitting, resetForm }) => {
@@ -29,7 +32,7 @@ export const Login: React.FC<LoginProps & RouteComponentProps> = ({
           const response = await login({
             variables: {
               email,
-              password
+              password,
             },
             update: (store, { data }) => {
               if (!data) {
@@ -38,11 +41,11 @@ export const Login: React.FC<LoginProps & RouteComponentProps> = ({
               store.writeQuery<MeQuery>({
                 query: MeDocument,
                 data: {
-                  me: data.login.user
-                }
+                  me: data.login.user,
+                },
                 // MeQuery user must match login user
               });
-            }
+            },
           });
 
           console.log('TCL: response: ', response);

@@ -1,0 +1,9 @@
+query Prices {
+  prices {
+    id
+    name
+    description
+    currentPrice
+    isActive
+  }
+}

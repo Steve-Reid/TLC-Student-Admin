@@ -4,12 +4,15 @@ import { useRegisterMutation } from '../generated/graphql';
 import { RouteComponentProps } from 'react-router-dom';
 import { validationSchema } from '../utils/validationSchema';
 import { FormTextField } from '../components/fields/FormTextField';
+import { History } from 'history';
 
-interface RegisterProps {}
+interface RegisterProps {
+  history: History;
+}
 
 export const Register: React.FC<RegisterProps & RouteComponentProps> = ({
-  history
-}) => {
+  history,
+}: RegisterProps) => {
   const [register] = useRegisterMutation();
 
   return (
@@ -19,18 +22,23 @@ export const Register: React.FC<RegisterProps & RouteComponentProps> = ({
       </div>
       <Formik
         initialValues={{
+          name: '',
           email: '',
-          password: ''
+          password: '',
         }}
         validationSchema={validationSchema}
-        onSubmit={async ({ email, password }, { setSubmitting, resetForm }) => {
+        onSubmit={async (
+          { name, email, password },
+          { setSubmitting, resetForm }
+        ) => {
           setSubmitting(true);
 
           const response = await register({
             variables: {
+              name,
               email,
-              password
-            }
+              password,
+            },
           });
 
           console.log('TCL: response: ', response);
@@ -41,6 +49,9 @@ export const Register: React.FC<RegisterProps & RouteComponentProps> = ({
       >
         {({ handleSubmit, isSubmitting }) => (
           <Form className="form" onSubmit={handleSubmit}>
+            <div className="input-row">
+              <FormTextField placeholder="Name" name="name" type="text" />
+            </div>
             <div className="input-row">
               <FormTextField placeholder="Email" name="email" type="text" />
             </div>

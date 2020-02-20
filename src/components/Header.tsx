@@ -5,16 +5,24 @@ import Button from '@material-ui/core/Button';
 
 import { useMeQuery, useLogoutMutation } from '../generated/graphql';
 import { setAccessToken } from '../accessToken';
-import { AppBar, Toolbar } from '@material-ui/core';
+// import { AppBar, Toolbar } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
       justifyContent: 'flex-end',
+      alignItems: 'center',
+      borderBottom: '1px solid rgba(0,0,0,0.12)',
       '& > *': {
         margin: theme.spacing(1),
       },
+      '& > P': {
+        textAlign: 'center',
+      },
+    },
+    link: {
+      textDecoration: 'none',
     },
   })
 );
@@ -38,39 +46,35 @@ export const Header: React.FC<HeaderProps> = () => {
 
   return (
     <header className={classes.root}>
-      <AppBar>
-        <Toolbar className={classes.root}>
-          <Link to="/">
-            <Button variant="contained" color="primary">
-              Home
-            </Button>
-          </Link>
-          <Link to="/register">
-            <Button variant="contained" color="primary">
-              Register
-            </Button>
-          </Link>
-          <Link to="/login">
-            <Button variant="contained" color="primary">
-              Login
-            </Button>
-          </Link>
-          {!loading && data && data.me ? (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={async () => {
-                await logout();
-                setAccessToken('');
-                await client!.resetStore();
-              }}
-            >
-              Logout
-            </Button>
-          ) : null}
-          {body}
-        </Toolbar>
-      </AppBar>
+      <Link className={classes.link} to="/">
+        <Button variant="contained" color="primary">
+          Home
+        </Button>
+      </Link>
+      <Link className={classes.link} to="/register">
+        <Button variant="contained" color="primary">
+          Register
+        </Button>
+      </Link>
+      <Link className={classes.link} to="/login">
+        <Button variant="contained" color="primary">
+          Login
+        </Button>
+      </Link>
+      {!loading && data && data.me ? (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={async () => {
+            await logout();
+            setAccessToken('');
+            await client!.resetStore();
+          }}
+        >
+          Logout
+        </Button>
+      ) : null}
+      {body}
     </header>
   );
 };

@@ -7,5 +7,8 @@ export const validationSchema = Yup.object().shape({
     .required('Password is required'),
   email: Yup.string()
     .email('Invalid email')
-    .required('Email is required')
+    .required('Email is required'),
+  currentPrice: Yup.number()
+    .integer('Not an Integer')
+    .moreThan(0, 'Must be more than 0'),
 });

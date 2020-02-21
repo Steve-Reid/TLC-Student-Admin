@@ -4,7 +4,7 @@ interface LoaderProps {}
 
 export const Loader: React.FC<LoaderProps> = () => {
   return (
-    <div className="loader-container">
+    <main className="loader-container">
       <div className="loader">
         <span />
         <span />
@@ -15,6 +15,6 @@ export const Loader: React.FC<LoaderProps> = () => {
         <span />
         <span />
       </div>
-    </div>
+    </main>
   );
 };

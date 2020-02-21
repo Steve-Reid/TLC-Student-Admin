@@ -4,8 +4,10 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router';
 import { useUserQuery } from '../../generated/graphql';
 import { Loader } from '../Loader';
 
@@ -19,6 +21,14 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-around',
+    },
+    statusLine: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    inactive: {
+      color: 'grey',
     },
     details: {},
     table: {
@@ -58,31 +68,41 @@ export const StudentMain: React.FC<StudentMainProps> = ({
 }: RouteComponentProps<TParams>) => {
   const classes = useStyles();
   const id = parseInt(match.params.id);
-  const { data, loading } = useUserQuery({
+  const { data, loading, error } = useUserQuery({
     variables: { userId: id },
     fetchPolicy: 'network-only',
   });
 
   console.log(data);
 
-  if (loading) {
-    return <Loader />;
-  }
-
-  if (data) {
+  if (!loading && !error && data) {
     return (
-      <>
-        <div className={`${classes.root} ${classes.status}`}>
-          <h2>Status</h2>
-          <h2>Class Credits</h2>
-        </div>
-        <div className={`${classes.root} ${classes.details}`}>
+      <main>
+        <section className={`${classes.root} ${classes.status}`}>
+          <div className={classes.statusLine}>
+            {data.user!.isActive ? (
+              <>
+                <h2>Status: Active </h2>
+                <CheckBoxOutlinedIcon />
+              </>
+            ) : (
+              <>
+                <h2>
+                  Status: <span className={classes.inactive}>Inactive</span>{' '}
+                </h2>
+                <CheckBoxOutlineBlankIcon className={classes.inactive} />
+              </>
+            )}
+          </div>
+          <h2>Class Credits: {data.user!.credits}</h2>
+        </section>
+        <section className={`${classes.root} ${classes.details}`}>
           <h2>Details</h2>
-          <p>Stated:</p>
+          <p>Started:</p>
           <p>Last attendance:</p>
           <p>Current Level:</p>
-        </div>
-        <div className={`${classes.root} ${classes.activity}`}>
+        </section>
+        <section className={`${classes.root} ${classes.activity}`}>
           <h2>Activity</h2>
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
@@ -108,8 +128,8 @@ export const StudentMain: React.FC<StudentMainProps> = ({
               ))}
             </TableBody>
           </Table>
-        </div>
-        <div className={`${classes.root} ${classes.attendance}`}>
+        </section>
+        <section className={`${classes.root} ${classes.attendance}`}>
           <h2>Attendance</h2>
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
@@ -135,8 +155,14 @@ export const StudentMain: React.FC<StudentMainProps> = ({
               ))}
             </TableBody>
           </Table>
-        </div>
-      </>
+        </section>
+      </main>
     );
   }
+
+  if (!loading && error) {
+    console.log('useUserQuery: error', error);
+  }
+
+  return <Loader />;
 };

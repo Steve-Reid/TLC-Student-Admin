@@ -9,34 +9,35 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
-  /** The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
-  Timestamp: any,
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any,
 };
 
 export type Attendance = {
    __typename?: 'Attendance',
   id: Scalars['ID'],
-  userId: Scalars['Int'],
-  attendanceDate: Scalars['Timestamp'],
+  attendanceDate: Scalars['DateTime'],
   level?: Maybe<Scalars['Int']>,
   isLead?: Maybe<Scalars['Boolean']>,
+  classSessionId?: Maybe<Scalars['Float']>,
   tariffId?: Maybe<Scalars['Int']>,
+  user?: Maybe<User>,
 };
 
 export type ClassSession = {
    __typename?: 'ClassSession',
   id: Scalars['ID'],
-  date: Scalars['Timestamp'],
+  date: Scalars['DateTime'],
   danceClassId: Scalars['Int'],
   leads: Scalars['Int'],
   follows: Scalars['Int'],
-  instructorId?: Maybe<Scalars['Int']>,
-  user?: Maybe<User>,
+  instructors?: Maybe<Array<User>>,
+  users?: Maybe<Array<User>>,
   danceClass: DanceClass,
 };
 
 export type ClassSessionInput = {
-  date: Scalars['Timestamp'],
+  date: Scalars['DateTime'],
   danceClassId: Scalars['Int'],
   instructorId?: Maybe<Scalars['Int']>,
 };
@@ -55,6 +56,7 @@ export type DanceClassInput = {
   description: Scalars['String'],
   level: Scalars['Int'],
 };
+
 
 export type LoginInput = {
   email: Scalars['String'],
@@ -127,8 +129,8 @@ export type PriceRevision = {
    __typename?: 'PriceRevision',
   id: Scalars['ID'],
   priceId: Scalars['Int'],
-  priceFrom: Scalars['Timestamp'],
-  priceTo?: Maybe<Scalars['Timestamp']>,
+  priceFrom: Scalars['DateTime'],
+  priceTo?: Maybe<Scalars['DateTime']>,
   cost: Scalars['Float'],
 };
 
@@ -142,6 +144,7 @@ export type Query = {
   danceClass: DanceClass,
   danceClasses: Array<DanceClass>,
   classSession: ClassSession,
+  todaysClassSessions: Array<ClassSession>,
   classSessions: Array<ClassSession>,
   prices: Array<Price>,
   priceRevisions: Array<PriceRevision>,
@@ -178,7 +181,6 @@ export enum Source {
   Other = 'OTHER'
 }
 
-
 export type User = {
    __typename?: 'User',
   id: Scalars['ID'],
@@ -207,6 +209,38 @@ export type ByeQueryVariables = {};
 export type ByeQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'bye'>
+);
+
+export type ClassSessionsQueryVariables = {};
+
+
+export type ClassSessionsQuery = (
+  { __typename?: 'Query' }
+  & { classSessions: Array<(
+    { __typename?: 'ClassSession' }
+    & Pick<ClassSession, 'id' | 'date' | 'leads' | 'follows'>
+    & { instructors: Maybe<Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    )>>, danceClass: (
+      { __typename?: 'DanceClass' }
+      & Pick<DanceClass, 'name' | 'description' | 'level'>
+    ), users: Maybe<Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'name'>
+    )>> }
+  )> }
+);
+
+export type DanceClassesQueryVariables = {};
+
+
+export type DanceClassesQuery = (
+  { __typename?: 'Query' }
+  & { danceClasses: Array<(
+    { __typename?: 'DanceClass' }
+    & Pick<DanceClass, 'id' | 'name' | 'description' | 'level'>
+  )> }
 );
 
 export type HelloQueryVariables = {};
@@ -319,6 +353,59 @@ export const ByeDocument = gql`
       
 export type ByeQueryHookResult = ReturnType<typeof useByeQuery>;
 export type ByeQueryResult = ApolloReactCommon.QueryResult<ByeQuery, ByeQueryVariables>;
+export const ClassSessionsDocument = gql`
+    query ClassSessions {
+  classSessions {
+    id
+    date
+    instructors {
+      id
+      name
+    }
+    leads
+    follows
+    danceClass {
+      name
+      description
+      level
+    }
+    users {
+      id
+      name
+    }
+  }
+}
+    `;
+
+    export function useClassSessionsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ClassSessionsQuery, ClassSessionsQueryVariables>) {
+      return ApolloReactHooks.useQuery<ClassSessionsQuery, ClassSessionsQueryVariables>(ClassSessionsDocument, baseOptions);
+    }
+      export function useClassSessionsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ClassSessionsQuery, ClassSessionsQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<ClassSessionsQuery, ClassSessionsQueryVariables>(ClassSessionsDocument, baseOptions);
+      }
+      
+export type ClassSessionsQueryHookResult = ReturnType<typeof useClassSessionsQuery>;
+export type ClassSessionsQueryResult = ApolloReactCommon.QueryResult<ClassSessionsQuery, ClassSessionsQueryVariables>;
+export const DanceClassesDocument = gql`
+    query DanceClasses {
+  danceClasses {
+    id
+    name
+    description
+    level
+  }
+}
+    `;
+
+    export function useDanceClassesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<DanceClassesQuery, DanceClassesQueryVariables>) {
+      return ApolloReactHooks.useQuery<DanceClassesQuery, DanceClassesQueryVariables>(DanceClassesDocument, baseOptions);
+    }
+      export function useDanceClassesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<DanceClassesQuery, DanceClassesQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<DanceClassesQuery, DanceClassesQueryVariables>(DanceClassesDocument, baseOptions);
+      }
+      
+export type DanceClassesQueryHookResult = ReturnType<typeof useDanceClassesQuery>;
+export type DanceClassesQueryResult = ApolloReactCommon.QueryResult<DanceClassesQuery, DanceClassesQueryVariables>;
 export const HelloDocument = gql`
     query Hello {
   hello

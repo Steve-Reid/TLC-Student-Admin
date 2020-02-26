@@ -1,0 +1,21 @@
+query ClassSessions {
+  classSessions {
+    id
+    date
+    instructors {
+      id
+      name
+    }
+    leads
+    follows
+    danceClass {
+      name
+      description
+      level
+    }
+    users {
+      id
+      name
+    }
+  }
+}

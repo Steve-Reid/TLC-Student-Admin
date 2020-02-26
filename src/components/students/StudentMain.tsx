@@ -4,8 +4,11 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import { Link } from 'react-router-dom';
+import { Button } from '@material-ui/core';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router';
 import { useUserQuery } from '../../generated/graphql';
@@ -16,6 +19,16 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       marginBottom: '16px',
+    },
+    nav: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '0 8px',
+    },
+    link: {
+      textDecoration: 'none',
     },
     status: {
       display: 'flex',
@@ -29,6 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     inactive: {
       color: 'grey',
+      marginLeft: '5px',
     },
     details: {},
     table: {
@@ -75,88 +89,106 @@ export const StudentMain: React.FC<StudentMainProps> = ({
 
   console.log(data);
 
-  if (!loading && !error && data) {
+  if (!loading && !error && data && data.user) {
+    const { user } = data;
     return (
-      <main>
-        <section className={`${classes.root} ${classes.status}`}>
-          <div className={classes.statusLine}>
-            {data.user!.isActive ? (
-              <>
-                <h2>Status: Active </h2>
-                <CheckBoxOutlinedIcon />
-              </>
-            ) : (
-              <>
-                <h2>
-                  Status: <span className={classes.inactive}>Inactive</span>{' '}
-                </h2>
-                <CheckBoxOutlineBlankIcon className={classes.inactive} />
-              </>
-            )}
+      <>
+        <nav>
+          <div className={classes.nav}>
+            <Link className={classes.link} to="/students">
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<ArrowBackIosIcon />}
+              >
+                Back to all Students
+              </Button>
+            </Link>
+            <p>{user.name}</p>
+            <p>{user.email}</p>
           </div>
-          <h2>Class Credits: {data.user!.credits}</h2>
-        </section>
-        <section className={`${classes.root} ${classes.details}`}>
-          <h2>Details</h2>
-          <p>Started:</p>
-          <p>Last attendance:</p>
-          <p>Current Level:</p>
-        </section>
-        <section className={`${classes.root} ${classes.activity}`}>
-          <h2>Activity</h2>
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Dessert (100g serving)</TableCell>
-                <TableCell align="right">Calories</TableCell>
-                <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                <TableCell align="right">Protein&nbsp;(g)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map(row => (
-                <TableRow key={row.name}>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.carbs}</TableCell>
-                  <TableCell align="right">{row.protein}</TableCell>
+        </nav>
+        <main>
+          <section className={`${classes.root} ${classes.status}`}>
+            <div className={classes.statusLine}>
+              {data.user!.isActive ? (
+                <>
+                  <h2>Status: Active </h2>
+                  <CheckBoxOutlinedIcon />
+                </>
+              ) : (
+                <>
+                  <h2>
+                    Status: <span className={classes.inactive}>Inactive </span>{' '}
+                  </h2>
+                  <CancelPresentationIcon className={classes.inactive} />
+                </>
+              )}
+            </div>
+            <h2>Class Credits: {data.user!.credits}</h2>
+          </section>
+          <section className={`${classes.root} ${classes.details}`}>
+            <h2>Details</h2>
+            <p>Started:</p>
+            <p>Last attendance:</p>
+            <p>Current Level:</p>
+          </section>
+          <section className={`${classes.root} ${classes.activity}`}>
+            <h2>Activity</h2>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Dessert (100g serving)</TableCell>
+                  <TableCell align="right">Calories</TableCell>
+                  <TableCell align="right">Fat&nbsp;(g)</TableCell>
+                  <TableCell align="right">Carbs&nbsp;(g)</TableCell>
+                  <TableCell align="right">Protein&nbsp;(g)</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </section>
-        <section className={`${classes.root} ${classes.attendance}`}>
-          <h2>Attendance</h2>
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Dessert (100g serving)</TableCell>
-                <TableCell align="right">Calories</TableCell>
-                <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                <TableCell align="right">Protein&nbsp;(g)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map(row => (
-                <TableRow key={row.name}>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.carbs}</TableCell>
-                  <TableCell align="right">{row.protein}</TableCell>
+              </TableHead>
+              <TableBody>
+                {rows.map(row => (
+                  <TableRow key={row.name}>
+                    <TableCell component="th" scope="row">
+                      {row.name}
+                    </TableCell>
+                    <TableCell align="right">{row.calories}</TableCell>
+                    <TableCell align="right">{row.fat}</TableCell>
+                    <TableCell align="right">{row.carbs}</TableCell>
+                    <TableCell align="right">{row.protein}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </section>
+          <section className={`${classes.root} ${classes.attendance}`}>
+            <h2>Attendance</h2>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Dessert (100g serving)</TableCell>
+                  <TableCell align="right">Calories</TableCell>
+                  <TableCell align="right">Fat&nbsp;(g)</TableCell>
+                  <TableCell align="right">Carbs&nbsp;(g)</TableCell>
+                  <TableCell align="right">Protein&nbsp;(g)</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </section>
-      </main>
+              </TableHead>
+              <TableBody>
+                {rows.map(row => (
+                  <TableRow key={row.name}>
+                    <TableCell component="th" scope="row">
+                      {row.name}
+                    </TableCell>
+                    <TableCell align="right">{row.calories}</TableCell>
+                    <TableCell align="right">{row.fat}</TableCell>
+                    <TableCell align="right">{row.carbs}</TableCell>
+                    <TableCell align="right">{row.protein}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </section>
+        </main>
+      </>
     );
   }
 

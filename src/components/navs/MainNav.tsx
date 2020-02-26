@@ -1,20 +1,53 @@
 import * as React from 'react';
-import { Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { Button } from '@material-ui/core';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    nav: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '0 8px',
+    },
+    link: {
+      textDecoration: 'none',
+    },
+    studentTotals: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+    },
+    loading: {},
+  })
+);
 
 interface MainNavProps {}
 
 const MainNav: React.FC<MainNavProps> = () => {
+  const classes = useStyles();
+
   return (
-    <>
-      <Link to="/students">
+    <nav className={classes.nav}>
+      <Link to="/students" className={classes.link}>
         <Button>Students</Button>
       </Link>
-      <Button href="#text-buttons">Team</Button>
-      <Button href="#text-buttons">Classes</Button>
-      <Button href="#text-buttons">Attendance</Button>
-      <Button href="#text-buttons">Revenue</Button>
-    </>
+      <Link to="/team" className={classes.link}>
+        <Button>Team</Button>
+      </Link>
+      <Link to="/classes" className={classes.link}>
+        <Button>Classes</Button>
+      </Link>
+      <Link to="/attendance" className={classes.link}>
+        <Button>Attendance</Button>
+      </Link>
+      <Link to="/revenue" className={classes.link}>
+        <Button>Revenue</Button>
+      </Link>
+    </nav>
   );
 };
 

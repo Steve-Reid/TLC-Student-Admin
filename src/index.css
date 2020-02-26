@@ -61,7 +61,7 @@ button {
   height: 300px;
   margin: 0 20px;
   background: #9fbbd1;
-  animation: animate 1.4s linear infinite;
+  animation: bars 1.4s linear infinite;
 }
 
 .loader span:nth-child(1) {
@@ -86,7 +86,7 @@ button {
   animation-delay: 1.2s;
 }
 
-@keyframes animate {
+@keyframes bars {
   0% {
     box-shadow: 0 0 0 rgba(0, 0, 0, 0.5);
     opacity: 0;
@@ -101,5 +101,37 @@ button {
     box-shadow: 0 0 0 rgba(0, 0, 0, 0.5);
     opacity: 0;
     transform: translateX(50px) scale(1);
+  }
+}
+
+.loader-sidebar-container {
+  margin: 0;
+  padding-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: top;
+  min-height: 82vh;
+  background: #9fbbd1;
+}
+
+.loader-sidebar-container svg {
+  width: 100px;
+  height: 100px;
+}
+
+.loader-sidebar-container svg rect {
+  width: 100px;
+  height: 100px;
+  fill: none;
+  stroke-width: 100px;
+  stroke: #628596;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 50%;
+  animation: square 2s linear infinite;
+}
+
+@keyframes square {
+  to {
+    stroke-dashoffset: 250%;
   }
 }

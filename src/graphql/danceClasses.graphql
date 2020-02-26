@@ -1,0 +1,8 @@
+query DanceClasses {
+  danceClasses {
+    id
+    name
+    description
+    level
+  }
+}

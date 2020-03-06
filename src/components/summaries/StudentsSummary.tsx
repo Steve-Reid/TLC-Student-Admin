@@ -1,33 +1,11 @@
 import * as React from 'react';
-// import { Link } from 'react-router-dom';
-// import { Button } from '@material-ui/core';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 
 import { useUsersQuery } from '../../generated/graphql';
 import { Loader } from '../Loader';
 import MainNav from '../navs/MainNav';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    nav: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '0 8px',
-    },
-    link: {
-      textDecoration: 'none',
-    },
-    studentTotals: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-    },
-    loading: {},
-  })
-);
+import { useLayoutStyles, useStyles } from '../../styles/styles';
+import { StudentsSideBar } from '../students/StudentsSideBar';
 
 type TotalStudents = {
   active: number;
@@ -38,6 +16,7 @@ interface StudentsSummaryProps {}
 
 export const StudentsSummary: React.FC<StudentsSummaryProps> = () => {
   const classes = useStyles();
+  const classesLayout = useLayoutStyles();
   const { data, loading, error } = useUsersQuery({
     fetchPolicy: 'network-only',
   });
@@ -57,14 +36,25 @@ export const StudentsSummary: React.FC<StudentsSummaryProps> = () => {
   if (!loading && !error && data) {
     return (
       <>
-        <MainNav />
-        <main>
-          <h1>Student Stats</h1>
-          <div className={classes.studentTotals}>
-            <p>Total Active Student: {totalStudents().active}</p>
-            <p>Total Inactive Student: {totalStudents().inactive}</p>
-          </div>
-        </main>
+        <div className={classesLayout.root}>
+          <Grid container>
+            <Grid container item xs={12} className={classesLayout.mainView}>
+              <Grid className={classesLayout.sidebar} item xs={3}>
+                <StudentsSideBar />
+              </Grid>
+              <Grid className={classesLayout.mainContent} item xs={9}>
+                <MainNav />
+                <main>
+                  <h1>Student Stats</h1>
+                  <div className={classes.studentTotals}>
+                    <p>Total Active Student: {totalStudents().active}</p>
+                    <p>Total Inactive Student: {totalStudents().inactive}</p>
+                  </div>
+                </main>
+              </Grid>
+            </Grid>
+          </Grid>
+        </div>
       </>
     );
   }

@@ -1,18 +1,15 @@
 import * as React from 'react';
 import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
 import format from 'date-fns/format';
 
-import { useLayoutStyles } from '../../styles/stylesLayout';
+import { useLayoutStyles, useStyles } from '../../styles/styles';
 import MainNav from '../navs/MainNav';
 import { DanceClassSideBar } from '../classes/DanceClassSideBar';
-
-const useStyles = makeStyles({});
 
 interface ClassesSummaryProps {}
 
 export const ClassesSummary: React.FC<ClassesSummaryProps> = () => {
-  // const classes = useStyles();
+  const classes = useStyles();
   const classesLayout = useLayoutStyles();
   const todaysDate = format(new Date(), 'EEEE do MMMM');
 

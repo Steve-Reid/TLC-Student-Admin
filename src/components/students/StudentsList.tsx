@@ -1,23 +1,13 @@
 import * as React from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { List, CircularProgress } from '@material-ui/core';
 import { useUsersQuery } from '../../generated/graphql';
 import { StudentsListItem } from './StudentsListItem';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: '100%',
-      maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-    },
-    loading: {},
-  })
-);
+import { useLayoutStyles, useStyles } from '../../styles/styles';
 
 interface StudentsListProps {}
 
 export const StudentsList: React.FC<StudentsListProps> = () => {
+  const classesLayout = useLayoutStyles();
   const classes = useStyles();
   const { data } = useUsersQuery({ fetchPolicy: 'network-only' });
   const [selectedId, setSelectedId] = React.useState('');
@@ -30,26 +20,31 @@ export const StudentsList: React.FC<StudentsListProps> = () => {
 
   if (!data) {
     return (
-      <div className={classes.loading}>
+      <div>
         <CircularProgress />
       </div>
     );
   }
 
   return (
-    <div className={classes.root}>
-      <List component="nav" aria-label="list of students">
+    <>
+      <List
+        className={classesLayout.sidebar}
+        component="nav"
+        aria-label="list of students"
+      >
         {data.users.map(user => {
           return (
-            <StudentsListItem
-              key={user.id}
-              user={user}
-              handleClick={handleListItemClick}
-              selected={selectedId}
-            />
+            <div key={user.id} className={classes.listItem}>
+              <StudentsListItem
+                user={user}
+                handleClick={handleListItemClick}
+                selected={selectedId}
+              />
+            </div>
           );
         })}
       </List>
-    </div>
+    </>
   );
 };

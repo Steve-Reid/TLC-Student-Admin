@@ -1,31 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
 import { useMeQuery, useLogoutMutation } from '../generated/graphql';
 import { setAccessToken } from '../accessToken';
-// import { AppBar, Toolbar } from '@material-ui/core';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-      borderBottom: '1px solid rgba(0,0,0,0.12)',
-      '& > *': {
-        margin: theme.spacing(1),
-      },
-      '& > P': {
-        textAlign: 'center',
-      },
-    },
-    link: {
-      textDecoration: 'none',
-    },
-  })
-);
+import { useStyles } from '../styles/styles';
 
 interface HeaderProps {}
 
@@ -45,7 +24,7 @@ export const Header: React.FC<HeaderProps> = () => {
   }
 
   return (
-    <header className={classes.root}>
+    <header className={classes.headerRoot}>
       <Link className={classes.link} to="/">
         <Button variant="contained" color="primary">
           Home

@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import format from 'date-fns/format';
 // import clsx from 'clsx';
 
-import { useLayoutStyles } from '../../styles/stylesLayout';
+import { useLayoutStyles } from '../../styles/styles';
 import { PricesSideBar } from '../prices/PricesSideBar';
 import MainNav from '../navs/MainNav';
 
